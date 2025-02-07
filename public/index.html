@@ -76,7 +76,7 @@
   </div>
 
   <script>
-    // Render data into a table.
+    // Render student data into a table.
     function renderData(dataArray) {
       const displayEl = document.getElementById('dataDisplay');
       if (!dataArray || dataArray.length === 0) {
@@ -96,13 +96,12 @@
       displayEl.innerHTML = html;
     }
 
-    // Fetch data from the server.
+    // Fetch data from the API.
     async function loadData() {
       try {
-        const response = await fetch('/data');
+        const response = await fetch('/api/data');
         if (response.ok) {
           const data = await response.json();
-          console.log("Loaded data:", data);
           renderData(data);
         } else {
           console.error('Error fetching data');
@@ -112,10 +111,10 @@
       }
     }
 
-    // Submit new student data to the server.
+    // Submit new student data.
     async function submitData(name, usn, section) {
       try {
-        const response = await fetch('/data', {
+        const response = await fetch('/api/data', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -123,8 +122,6 @@
           body: JSON.stringify({ name, usn, section })
         });
         if (response.ok) {
-          const result = await response.json();
-          console.log('Data submitted successfully:', result);
           document.getElementById('status').textContent = 'Data submitted successfully!';
           loadData();  // Refresh the displayed data.
         } else {
@@ -136,25 +133,17 @@
       }
     }
 
-    // Handle click event for the Submit button.
+    // Handle the submit button click.
     document.getElementById('submitBtn').addEventListener('click', () => {
       const name = document.getElementById('name').value.trim();
       const usn = document.getElementById('usn').value.trim();
       const section = document.getElementById('section').value.trim();
-      const statusEl = document.getElementById('status');
-
       if (!name || !usn || !section) {
-        statusEl.textContent = 'Please fill in all fields.';
+        document.getElementById('status').textContent = 'Please fill in all fields.';
         return;
       }
-
-      // Clear any previous status messages.
-      statusEl.textContent = '';
-
-      // Submit the data.
       submitData(name, usn, section);
-
-      // Clear the input fields.
+      // Clear input fields.
       document.getElementById('name').value = '';
       document.getElementById('usn').value = '';
       document.getElementById('section').value = '';
@@ -162,9 +151,6 @@
 
     // Load data when the page loads.
     window.onload = loadData;
-
-    // Optionally, poll the server every 5 seconds to simulate realtime updates.
-    setInterval(loadData, 5000);
   </script>
 </body>
 </html>
